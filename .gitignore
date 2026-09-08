@@ -1,5 +1,7 @@
 data/daily_cache/*
 !data/daily_cache/.gitkeep
+Folio_details.csv
+config_folio.py
 
 
 

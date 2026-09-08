@@ -1,10 +1,12 @@
 # Mutual Fund Portfolio Overview
 
-Gives you the detailed current valuation and performane analysis of all your mutual fund portfolio holding by just adding your CAS pdf.
+Gives you the detailed current valuation and performane analysis of all your mutual fund portfolio holding by just adding the detailed CAS pdf from CAMS.
 
 ## Features
 - Safest way to view and analyse the mutual fund portfolio without disclosing any personal details
-- Get portfolio specific charts, graphs and metric by fetching the nav history and the fact sheets from AMFI
+- Get current portfolio valuation, compare the valution on an interval of Daily, Weekly, Monthly, Quarterly and Yearly
+- Latest NAV of the respective funds from the portfolio are fetched from the AMFI and stored
+- Investments for specific Goals can be tracked by creating a dataset for Categorizing the funds and unit ratio based on the Goals
 
 ## Project Structure
 ```text
@@ -12,12 +14,13 @@ Gives you the detailed current valuation and performane analysis of all your mut
 │   ├── features/
 │   │   ├── __init__.py
 │   │   ├── amfi_navhistory.py  # AMFI data fetch module
+│   │   ├── config_folio.py     # Folio csv file directory and mapping      
 │   │   ├── config.py           # AMFI URL and NAV file directory stored
+│   │   ├──func_stream.py       # Defined functions used in app.py
 │   │   ├── pdf_process.py      # Extract CAS data module
 │   │   ├── pofo_data.py        # CAS data and AMFI data joining module
 │   │   └── streamlit_view.py   # Main Streamlit application
 │   └── tests/
-│       └──
 ├── data/
 │   └── daily_cache/            # Downloaded NAV files directory
 ├── README.md                   # This documentation file
@@ -34,7 +37,7 @@ Make sure you have **Python 3.8+** installed.
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/echobon-amjith/amfi_mf_portfolio_insight_from_cas.git
+git clone https://github.com/echobon-amjith/personal_mf_portfolio_insight_from_cas.git
 ```
 
 ### 3. Set Up a Virtual Environment (Recommended)
