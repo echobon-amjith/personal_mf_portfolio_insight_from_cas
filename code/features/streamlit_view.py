@@ -1,7 +1,5 @@
 import streamlit as st, pandas as pd
-from features.amfi_navhistory import NAVFetcher
-from features.pofo_data import MFdata
-from features.config import URL, CACHE_DIR
+import features.func_stream as fs
 
 st.set_page_config(layout="wide")
 st.title("Analyse your Portfolio")
@@ -15,32 +13,35 @@ with col2:
    
 if st.button(label = "Extract"):
     if pdf_file is not None:
-        fetch= NAVFetcher(url= URL, cache_directory= CACHE_DIR)
-        proc= MFdata(pdf_path= pdf_file, passw= pdf_pass, fetcher= fetch)
-        tab1, tab2, tab3= st.tabs(["Table", "Chart", "Performance"])
+        df= fs.get_data(pdf=pdf_file, password= pdf_pass, opt=option)
+        tab1, tab2, tab3= st.tabs(["All", "Folio-Wise", "Performance"])
         with tab1:
-            st.write("### Your Mutual Fund Portfolio")
-            if option == "Daily":
-                df= proc.get_processed_pofo_data(timeframe= "day")
-            elif option == "Weekly":
-                df= proc.get_processed_pofo_data(timeframe= "week")
-            elif option == "Monthly":
-                df= proc.get_processed_pofo_data(timeframe= "month")
-            elif option == "Quarterly":
-                df= proc.get_processed_pofo_data(timeframe= "quarter")
-            elif option == "Yearly":
-                df= proc.get_processed_pofo_data(timeframe= "year")
-            else:
-                raise ValueError(
-                    "Invalid timeframe. Use 'Daily', 'Weekly', 'Monthly', 'Quarterly' or 'Yearly'"
-                )
+            st.header("Portfolio Overview")
+            fund_grouped_data= fs.get_grouped_data(df,by = ["Fund Name"])
             col3, col4, col5 = st.columns(3)
-            col3.metric(label= "Current Total Value", value= df["Current Value"].sum().astype(int), delta= f"{((df['Total Gain'].sum())/df['Cost Value'].sum()):.2%}")
-            col4.metric(label= "Total Gain",value= df["Total Gain"].sum().astype(int) , delta= df["Gain"].sum().round(2))
+            total_cv, delta_cv, total_gain, delta_gain, cost_value, perc= fs.metrics(fund_grouped_data)
+            col3.metric(label= "Current Valuation", value= total_cv, delta= delta_cv, format="%,d")
+            col4.metric(label= "Total Gain",value= total_gain , delta= delta_gain, format="%,d")
             date= df["Date"].unique()[0]
             col5.metric(label= "Latest NAV Date",value= pd.to_datetime(date).strftime("%B %d, %Y"))
-            st.write(df.drop(columns=['Date']).sort_values(by="Gain %", ascending= False).set_index("Fund Name"))
-            st.metric(label= "Cost Value", value= df["Cost Value"].sum().astype(int))
+            fund_grouped_data= fund_grouped_data.sort_values(by="Gain %", ascending= False)
+            st.write(fund_grouped_data)
+            st.metric(label= "Total Cost Value", value= cost_value, format="%,d")
+
+        with tab2:
+            st.header("Grouped by Folio")
+
+            for folio, folio_data in df.groupby("Folio", sort= False):
+                total_cv, delta_cv, total_gain, delta_gain, cost_value, perc= fs.metrics(folio_data)
+                col1, col2, col3, col4 = st.columns(4)
+                col1.subheader(folio)
+                col2.metric(label= "Current Valuation", value=total_cv, delta= delta_cv, format="%,d")
+                col3.metric(label="Total Gain", value= total_gain, delta= delta_gain, format="%,d")
+                col4.metric(label= "Folio %", value= perc)
+                folio_data["All-Portfolio %"]= ((folio_data["Current Value"]/sum(folio_data["Current Value"]))*100).round(2)
+                st.dataframe(folio_data.drop(columns=["Date", "Folio"]).sort_values(by="Gain %", ascending= False).set_index("Fund Name"))
+                st.metric(label= "Total Cost Value", value= cost_value, format="%,d")
+                st.divider()
 
     else:
         st.warning("Please attach a PDF file first before clicking the button.")
