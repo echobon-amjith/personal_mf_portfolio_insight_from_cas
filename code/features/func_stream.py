@@ -4,7 +4,6 @@ from features.config import URL, CACHE_DIR
 from features.config_folio import FOLIO_DIR, FOLIO_MAP
 import streamlit as st
 
-@st.cache_data
 def get_data(pdf, password, opt):
     fetch= NAVFetcher(url= URL, cache_directory= CACHE_DIR)
     proc= MFdata(pdf_path= pdf, passw= password, fetcher= fetch)
@@ -27,22 +26,22 @@ def get_data(pdf, password, opt):
     return df
 
 def metrics(data):
-    value=  data["Current Value"].sum().astype(int)
+    value=  data["Current Value"].sum().round()
     value_delta= f"{((data['Total Gain'].sum())/data['Cost Value'].sum()):.2%}"
-    gain= data["Total Gain"].sum().astype(int)
+    gain= data["Total Gain"].sum().round()
     gain_delta= data["Gain"].sum().round(2)
-    cost_value= data["Cost Value"].sum().astype(int)
+    cost_value= data["Cost Value"].sum().round()
     perc= f"{(data["All-Portfolio %"].sum()/100):.0%}"
 
     return value, value_delta, gain, gain_delta, cost_value, perc
 
 def get_grouped_data(data, by):
     agg_num_col={
+        "All-Portfolio %": "mean",
         "Cost Value":"sum",
         "Current Value": "sum",
-        "All-Portfolio %": "mean",
-        "Total Gain": "sum",
         "Total Gain %": "mean",
+        "Total Gain": "sum",
         "Gain": "sum",
         "Gain %": "mean"
     }

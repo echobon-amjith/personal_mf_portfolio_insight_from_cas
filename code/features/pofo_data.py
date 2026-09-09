@@ -67,7 +67,7 @@ class MFdata:
 
         return data
 
-    def get_processed_folio_data(self,timeframe, folio_map, folio_details:Path | None=None,df_columns:list =["Date","Folio","Fund Name", "Cost Value", "Current Value", "All-Portfolio %", "Total Gain", "Total Gain %", "Gain", "Gain %"]):
+    def get_processed_folio_data(self,timeframe, folio_map, folio_details:Path | None=None,df_columns:list =["Date","Folio","Fund Name", "All-Portfolio %", "Cost Value", "Current Value", "Total Gain %", "Total Gain", "Gain", "Gain %"]):
         data= self.col_rename(self.get_pofo_value(timeframe,folio_map=folio_map,folio_details=folio_details))
         data["Fund Name"]=data["Fund Name"].str.split(r'- Direct|- Growth', regex= True).str[0]
         data["Date"] = pd.to_datetime(data["Date"])

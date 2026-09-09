@@ -30,7 +30,6 @@ if st.button(label = "Extract"):
 
         with tab2:
             st.header("Grouped by Folio")
-
             for folio, folio_data in df.groupby("Folio", sort= False):
                 total_cv, delta_cv, total_gain, delta_gain, cost_value, perc= fs.metrics(folio_data)
                 col1, col2, col3, col4 = st.columns(4)
