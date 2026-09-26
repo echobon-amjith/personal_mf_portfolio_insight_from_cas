@@ -22,8 +22,13 @@ if st.button(label = "Extract"):
             total_cv, delta_cv, total_gain, delta_gain, cost_value, perc= fs.metrics(fund_grouped_data)
             col3.metric(label= "Current Valuation", value= total_cv, delta= delta_cv, format="%,d")
             col4.metric(label= "Total Gain",value= total_gain , delta= delta_gain, format="%,d")
-            date= df["Date"].unique()[0]
-            col5.metric(label= "Latest NAV Date",value= pd.to_datetime(date).strftime("%B %d, %Y"))
+            date= df["Date"].dropna().unique()
+            if len(date) > 0:
+                date = date[0]
+                formatted_date = pd.to_datetime(date).strftime("%B %d, %Y")
+            else:
+                formatted_date = "No valid dates found"
+            col5.metric(label= "Latest NAV Date",value= formatted_date)
             fund_grouped_data= fund_grouped_data.sort_values(by="Gain %", ascending= False)
             st.write(fund_grouped_data)
             st.metric(label= "Total Cost Value", value= cost_value, format="%,d")
