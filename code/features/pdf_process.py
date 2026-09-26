@@ -28,11 +28,9 @@ class MFtable:
         return keyword_pages
 
     def extract_value(self, pattern: str):
-        page_n= self._find_keyword_pages(self.pdf, "ISIN")
         extracted_value=[]
 
-        for page_i in page_n:
-            page = self.pdf.pages[page_i]
+        for page in self.pdf.pages:
             text = page.extract_text() or ""
 
             isin_values = re.findall(pattern, text)
