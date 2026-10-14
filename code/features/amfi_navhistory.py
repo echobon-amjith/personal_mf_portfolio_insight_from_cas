@@ -80,20 +80,26 @@ class NAVFetcher:
         if timeframe == "latest":
             past_date = latest_day
 
-        elif timeframe == "day":
+        elif timeframe == "1-D":
             past_date = latest_day - timedelta(days=1)
 
-        elif timeframe == "week":
+        elif timeframe == "1-W":
             past_date = latest_day - timedelta(weeks=1)
 
-        elif timeframe == "month":
+        elif timeframe == "1-M":
             past_date = latest_day - relativedelta(months= 1)
 
-        elif timeframe == "quarter":
+        elif timeframe == "1-Q":
             past_date = latest_day - relativedelta(months=3)
 
-        elif timeframe == "year":
+        elif timeframe == "1-Y":
             past_date = latest_day - relativedelta(years= 1)
+
+        elif timeframe == "3-Y":
+            past_date = latest_day - relativedelta(years= 3)
+
+        elif timeframe == "5-Y":
+            past_date = latest_day - relativedelta(years= 5)
 
         else:
             raise ValueError(

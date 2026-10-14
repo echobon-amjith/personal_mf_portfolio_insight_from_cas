@@ -3,7 +3,7 @@ from features.pdf_process import MFtable
 import pdfplumber
 from features.amfi_navhistory import NAVFetcher
 from datetime import date, timedelta
-from pathlib import Path
+from typing import Any
 
 class MFdata:
 
@@ -24,15 +24,14 @@ class MFdata:
 
         return nav_df
 
-    def get_pofo_value(self,timeframe, folio_map, lookup_columns:list = ["NAV_Name", "ISIN", "hNAV_Date", "hNAV_Amt"], folio_details: Path | None =None):
+    def get_pofo_value(self,timeframe, lookup_columns:list = ["NAV_Name", "ISIN", "hNAV_Date", "hNAV_Amt"], folio_details: Any| None =None):
         pdf= MFtable(self.pdf_path, self.password)
         df= pdf.pofo_overview()
         lookup_latest_nav_df = self._mf_nav_fetch("latest")
         lookup_prev_nav_df = self._mf_nav_fetch(timeframe)
 
-        if folio_details is not None and Path(folio_details).is_file():
+        if folio_details is not None :
             folio_df= pd.read_csv(folio_details)
-            folio_df["Folio"]=folio_df["Folio"].map(folio_map)
             df= folio_df.merge(
                 df,
                 on= "ISIN",
@@ -67,8 +66,8 @@ class MFdata:
 
         return data
 
-    def get_processed_folio_data(self,timeframe, folio_map, folio_details:Path | None=None,df_columns:list =["Date","Folio","Fund Name", "All-Portfolio %", "Cost Value", "Current Value", "Total Gain %", "Total Gain", "Gain", "Gain %"]):
-        data= self.col_rename(self.get_pofo_value(timeframe,folio_map=folio_map,folio_details=folio_details))
+    def get_processed_folio_data(self,timeframe, folio_details:Any | None=None,df_columns:list =["Date","Folio","Fund Name", "All-Portfolio %", "Cost Value", "Current Value", "Total Gain %", "Total Gain", "Gain", "Gain %"]):
+        data= self.col_rename(self.get_pofo_value(timeframe,folio_details=folio_details))
         data["Fund Name"]=data["Fund Name"].str.split(r'- Direct|- Growth', regex= True).str[0]
         data["Date"] = pd.to_datetime(data["Date"])
         data["Date"]= data["Date"].dt.strftime('%Y-%m-%d')
