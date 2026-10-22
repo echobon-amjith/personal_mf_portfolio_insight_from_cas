@@ -7,14 +7,15 @@ st.title("Analyse your Portfolio")
 col1, col2 = st.columns(2)
 with col1:
     pdf_file= st.file_uploader(label="Upload the Detailed CAS from CAMS", type=["pdf"], max_upload_size= 10)
-    option = st.selectbox("Interval",("Daily","Weekly","Monthly","Quarterly", "Yearly"), index=0)
+    option = st.selectbox("Interval",("1-D","1-W","1-M","1-Q", "1-Y", "3-Y", "5-Y"), index=0)
 with col2:
     pdf_pass = st.text_input(label= "Enter Password (If encrypted)", type= "password")
+    folio_data = st.file_uploader(label= "Upload Folio/ Goal Details (optional)", type=["csv"], max_upload_size=10)
    
 if st.button(label = "Extract"):
     if pdf_file is not None:
-        df= fs.get_data(pdf=pdf_file, password= pdf_pass, opt=option)
-        tab1, tab2, tab3= st.tabs(["All", "Folio-Wise", "Performance"])
+        df= fs.get_data(pdf=pdf_file, password= pdf_pass, folio_details= folio_data, opt=option)
+        tab1, tab2, tab3= st.tabs(["All", "Folio-Wise", "Performance(beta)"])
         with tab1:
             st.header("Portfolio Overview")
             fund_grouped_data= fs.get_grouped_data(df,by = ["Fund Name"])

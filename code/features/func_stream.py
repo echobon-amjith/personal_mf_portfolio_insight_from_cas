@@ -1,23 +1,27 @@
 from features.amfi_navhistory import NAVFetcher
 from features.pofo_data import MFdata
 from features.config import URL, CACHE_DIR 
-from features.config_folio import FOLIO_DIR, FOLIO_MAP
+# from features.config_folio import FOLIO_DIR, FOLIO_MAP
 import streamlit as st
 
-def get_data(pdf, password, opt):
+def get_data(pdf, password, opt, folio_details: str| None =None):
     fetch= NAVFetcher(url= URL, cache_directory= CACHE_DIR)
     proc= MFdata(pdf_path= pdf, passw= password, fetcher= fetch)
 
-    if opt == "Daily":
-        df= proc.get_processed_folio_data(timeframe= "day", folio_map= FOLIO_MAP, folio_details= FOLIO_DIR)
-    elif opt == "Weekly":
-        df= proc.get_processed_folio_data(timeframe= "week", folio_map= FOLIO_MAP, folio_details= FOLIO_DIR)
-    elif opt == "Monthly":
-        df= proc.get_processed_folio_data(timeframe= "month",folio_map= FOLIO_MAP, folio_details= FOLIO_DIR)
-    elif opt == "Quarterly":
-        df= proc.get_processed_folio_data(timeframe= "quarter", folio_map= FOLIO_MAP, folio_details= FOLIO_DIR)
-    elif opt == "Yearly":
-        df= proc.get_processed_folio_data(timeframe= "year", folio_map= FOLIO_MAP, folio_details= FOLIO_DIR)
+    if opt == "1-D":
+        df= proc.get_processed_folio_data(timeframe= "1-D", folio_details=folio_details)
+    elif opt == "1-W":
+        df= proc.get_processed_folio_data(timeframe= "1-W", folio_details=folio_details)
+    elif opt == "1-M":
+        df= proc.get_processed_folio_data(timeframe= "1-M", folio_details=folio_details)
+    elif opt == "1-Q":
+        df= proc.get_processed_folio_data(timeframe= "1-Q", folio_details=folio_details)
+    elif opt == "1-Y":
+        df= proc.get_processed_folio_data(timeframe= "1-Y", folio_details=folio_details)
+    elif opt == "3-Y":
+        df= proc.get_processed_folio_data(timeframe= "3-Y", folio_details=folio_details)
+    elif opt == "5-Y":
+        df= proc.get_processed_folio_data(timeframe= "5-Y", folio_details=folio_details)
     else:
         raise ValueError(
             "Invalid timeframe. Use 'Daily', 'Weekly', 'Monthly', 'Quarterly' or 'Yearly'"

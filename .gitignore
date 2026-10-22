@@ -1,7 +1,5 @@
 data/daily_cache/*
 !data/daily_cache/.gitkeep
-Folio_details.csv
-config_folio.py
 
 
 
@@ -94,7 +92,7 @@ celerybeat-schedule
 # Environments
 .env
 .venv
-env/
+cas_env/
 venv/
 ENV/
 env.bak/
@@ -116,3 +114,4 @@ venv.bak/
 
 .DS_Store
 *.bat
+*.sh
